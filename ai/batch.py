@@ -1,7 +1,7 @@
 import numpy as np
 
 from ai.network import INPUTS
-from ai.guidance import observe_guidance
+from ai.guidance import jump_direction, observe_guidance
 
 
 class PopulationPolicy:
@@ -60,7 +60,8 @@ class PopulationPolicy:
                     dx / self.widths[i], (target.y - feet[i]) / 300,
                     target.w / self.widths[i], 1,
                 )
-            observations[i, 28:] = observe_guidance(environment)
+            observations[i, 28:32] = observe_guidance(environment)
+            observations[i, 32] = jump_direction(environment)
         return observations
 
     def act(self):

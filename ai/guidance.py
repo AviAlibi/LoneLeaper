@@ -5,6 +5,16 @@ from game.player import Player
 from game.world import Platform, World
 
 
+def jump_direction(environment):
+    """Direction toward the target center, independent of repositioning hints."""
+    target = environment.target
+    if target is None:
+        return 0
+    player = environment.game.player
+    offset = target.x + target.w / 2 - (player.x + player.w / 2)
+    return (offset > 0) - (offset < 0)
+
+
 @lru_cache(maxsize=32)
 def geometry(width, platforms):
     world = World()

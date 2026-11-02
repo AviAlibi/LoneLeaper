@@ -1,5 +1,5 @@
 from game.game import Game
-from ai.guidance import observe_guidance
+from ai.guidance import jump_direction, observe_guidance
 
 
 class Environment:
@@ -63,6 +63,7 @@ class Environment:
                                 (target.y - feet) / 300,
                                 target.w / game.world.width, 1))
         observation.extend(observe_guidance(self))
+        observation.append(jump_direction(self))
         return observation
 
     def step(self, network):

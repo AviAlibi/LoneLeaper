@@ -3,16 +3,17 @@ import warnings
 import numpy as np
 
 LEGACY_INPUTS = 24
-INPUTS = 32
+INPUTS = 33
 HIDDEN = 12
 
 
 class Network:
-    """32 inputs -> 12 hidden units -> direction and jump hold.
+    """33 inputs -> 12 hidden units -> direction and jump hold.
 
     The first 24 inputs retain the original layout; four target inputs are appended.
     Four launch/prediction inputs follow the target inputs. Legacy checkpoints
-    are padded with zero weights to preserve their policy.
+    are padded with zero weights to preserve their policy. The final input is
+    explicit target direction (-1 left, 0 centered/no target, +1 right).
     Mutated children use small changes 90% of the time, larger changes 10%.
     """
 
@@ -51,7 +52,7 @@ class Network:
             if set(data.files) != {f"arr_{i}" for i in range(4)}:
                 raise ValueError("Invalid network checkpoint: expected four weight arrays.")
             weights = [np.asarray(data[f"arr_{i}"], dtype=float) for i in range(4)]
-        if weights[0].shape in ((LEGACY_INPUTS, HIDDEN), (28, HIDDEN)):
+        if weights[0].shape in ((LEGACY_INPUTS, HIDDEN), (28, HIDDEN), (32, HIDDEN)):
             previous_inputs = weights[0].shape[0]
             weights[0] = np.pad(weights[0], ((0, INPUTS - previous_inputs), (0, 0)))
             warnings.warn(f"Migrated {previous_inputs}-input checkpoint: new guidance inputs initially "
